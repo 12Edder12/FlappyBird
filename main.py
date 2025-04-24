@@ -80,43 +80,6 @@ def show_menu():
                     exit()
         clock.tick(15)
 
-def training_options():
-    config.window.fill((0, 0, 0))
-    font = pygame.font.SysFont('Arial', 28)
-    title = font.render('Modo Entrenamiento', True, (255, 255, 255))
-    
-    instructions = font.render('Seleccione número de iteraciones:', True, (255, 255, 255))
-    option1 = font.render('1. 10 iteraciones', True, (255, 255, 255))
-    option2 = font.render('2. 50 iteraciones', True, (255, 255, 255))
-    option3 = font.render('3. 100 iteraciones', True, (255, 255, 255))
-    back = font.render('0. Volver', True, (255, 255, 255))
-    
-    config.window.blit(title, (config.win_width//2 - title.get_width()//2, 50))
-    config.window.blit(instructions, (20, 120))
-    config.window.blit(option1, (50, 180))
-    config.window.blit(option2, (50, 220))
-    config.window.blit(option3, (50, 260))
-    config.window.blit(back, (50, 320))
-    
-    pygame.display.flip()
-    
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    return 10
-                elif event.key == pygame.K_2:
-                    return 50
-                elif event.key == pygame.K_3:
-                    return 100
-                elif event.key == pygame.K_0:
-                    return None
-        clock.tick(15)
-
 def get_saved_models():
     models = []
     if os.path.exists('models'):
@@ -274,10 +237,10 @@ def play_with_model(model_path):
     # Limpiar para volver al menú
     config.pipes.clear()
 
-def train_population(iterations, population_size=100):
+def train_population(population_size=100):
     # Inicializar población
     pop = population.Population(population_size)
-    pop.iterations_limit = iterations
+    pop.iterations_limit = None
     
     # Configuración del juego
     pipes_spawn_time = 10
@@ -296,7 +259,7 @@ def train_population(iterations, population_size=100):
         
         # Mostrar información del entrenamiento
         font = pygame.font.SysFont('Arial', 16)
-        gen_text = font.render(f"Generación: {pop.generation}/{iterations}", True, (255, 255, 255))
+        gen_text = font.render(f"Generación: {pop.generation}/Infinito", True, (255, 255, 255))
         alive_text = font.render(f"Vivos: {sum(1 for p in pop.players if p.alive)}/{len(pop.players)}", True, (255, 255, 255))
         fitness_text = font.render(f"Mejor Fitness: {pop.best_fitness}", True, (255, 255, 255))
         
@@ -355,11 +318,8 @@ def main():
         choice = show_menu()
         
         if choice == 'train':
-            # Mostrar opciones de entrenamiento
-            iterations = training_options()
-            if iterations is not None:
-                # Iniciar entrenamiento
-                train_population(iterations)
+            # Iniciar entrenamiento directamente con valores predeterminados (50 iteraciones)
+            train_population()
         
         elif choice == 'play':
             # Mostrar lista de modelos

@@ -1,0 +1,5 @@
+Generaciones: 4
+Fitness: 5647
+Fecha de creacion: 2025-04-24 07:52:56
+Poblacion: 100
+Iteraciones: 50
