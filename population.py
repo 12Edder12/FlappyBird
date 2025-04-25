@@ -38,7 +38,7 @@ class Population:
         print(f'Generación {self.generation} completada. Mejor fitness: {self.best_fitness}')
         
         # Verificar si hemos alcanzado el límite de iteraciones
-        if self.iterations_limit > 0 and self.generation >= self.iterations_limit:
+        if self.iterations_limit is not None and self.iterations_limit > 0 and self.generation >= self.iterations_limit:
             print(f"¡Límite de {self.iterations_limit} generaciones alcanzado!")
             self.save_best_player()
             pygame.quit()

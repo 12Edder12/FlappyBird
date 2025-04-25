@@ -47,17 +47,56 @@ def load_assets():
         print(f"Error al cargar imágenes: {str(e)}")
         print("El juego funcionará con gráficos simples.")
 
+def draw_background():
+    """Dibuja el fondo en la ventana del juego"""
+    try:
+        # Intentar cargar directamente la imagen de fondo
+        if not hasattr(config, 'BG_IMG') or config.BG_IMG is None:
+            if os.path.exists('assets/background.png'):
+                config.BG_IMG = pygame.image.load('assets/background.png')
+                # Ajustar tamaño si es necesario
+                config.BG_IMG = pygame.transform.scale(config.BG_IMG, (config.win_width, config.win_height))
+        
+        # Dibujar la imagen si existe
+        if hasattr(config, 'BG_IMG') and config.BG_IMG:
+            config.window.blit(config.BG_IMG, (0, 0))
+        else:
+            config.window.fill((0, 0, 0))
+    except Exception as e:
+        print(f"Error cargando fondo: {str(e)}")
+        config.window.fill((0, 0, 0))
+
 def show_menu():
-    config.window.fill((0, 0, 0))
+    # Dibujar fondo
+    draw_background()
+    
     font = pygame.font.SysFont('Arial', 32)
     title = font.render('FlappyBird AI', True, (255, 255, 255))
     option1 = font.render('1. Entrenamiento', True, (255, 255, 255))
     option2 = font.render('2. Jugar', True, (255, 255, 255))
     exit_text = font.render('0. Salir', True, (255, 255, 255))
     
+    # Añadir un fondo semi-transparente a los textos para mejorar legibilidad
+    title_bg = pygame.Surface((title.get_width() + 20, title.get_height() + 10), pygame.SRCALPHA)
+    title_bg.fill((0, 0, 0, 150))
+    option1_bg = pygame.Surface((option1.get_width() + 20, option1.get_height() + 10), pygame.SRCALPHA)
+    option1_bg.fill((0, 0, 0, 150))
+    option2_bg = pygame.Surface((option2.get_width() + 20, option2.get_height() + 10), pygame.SRCALPHA)
+    option2_bg.fill((0, 0, 0, 150))
+    exit_bg = pygame.Surface((exit_text.get_width() + 20, exit_text.get_height() + 10), pygame.SRCALPHA)
+    exit_bg.fill((0, 0, 0, 150))
+    
+    # Dibujar fondos y textos
+    config.window.blit(title_bg, (config.win_width//2 - (title.get_width() + 20)//2, 45))
     config.window.blit(title, (config.win_width//2 - title.get_width()//2, 50))
+    
+    config.window.blit(option1_bg, (40, 145))
     config.window.blit(option1, (50, 150))
+    
+    config.window.blit(option2_bg, (40, 195))
     config.window.blit(option2, (50, 200))
+    
+    config.window.blit(exit_bg, (40, 245))
     config.window.blit(exit_text, (50, 250))
     
     pygame.display.flip()
@@ -101,13 +140,24 @@ def get_saved_models():
 def show_models_list():
     models = get_saved_models()
     
+    # Dibujar fondo
+    draw_background()
+    
     if not models:
-        config.window.fill((0, 0, 0))
         font = pygame.font.SysFont('Arial', 24)
         title = font.render('No hay modelos guardados', True, (255, 255, 255))
         back = font.render('Presione cualquier tecla para volver', True, (255, 255, 255))
         
+        # Añadir fondos semi-transparentes
+        title_bg = pygame.Surface((title.get_width() + 20, title.get_height() + 10), pygame.SRCALPHA)
+        title_bg.fill((0, 0, 0, 150))
+        back_bg = pygame.Surface((back.get_width() + 20, back.get_height() + 10), pygame.SRCALPHA)
+        back_bg.fill((0, 0, 0, 150))
+        
+        config.window.blit(title_bg, (config.win_width//2 - (title.get_width() + 20)//2, 145))
         config.window.blit(title, (config.win_width//2 - title.get_width()//2, 150))
+        
+        config.window.blit(back_bg, (config.win_width//2 - (back.get_width() + 20)//2, 195))
         config.window.blit(back, (config.win_width//2 - back.get_width()//2, 200))
         
         pygame.display.flip()
@@ -123,10 +173,20 @@ def show_models_list():
                     return None
             clock.tick(15)
     
-    config.window.fill((0, 0, 0))
     font = pygame.font.SysFont('Arial', 24)
     title = font.render('Seleccione un modelo:', True, (255, 255, 255))
+    
+    # Fondo semi-transparente para el título
+    title_bg = pygame.Surface((title.get_width() + 20, title.get_height() + 10), pygame.SRCALPHA)
+    title_bg.fill((0, 0, 0, 150))
+    config.window.blit(title_bg, (config.win_width//2 - (title.get_width() + 20)//2, 45))
     config.window.blit(title, (config.win_width//2 - title.get_width()//2, 50))
+    
+    # Panel semi-transparente para la lista de modelos
+    list_height = len(models) * 40 + 50  # Altura para los modelos + botón volver
+    list_bg = pygame.Surface((350, list_height), pygame.SRCALPHA)
+    list_bg.fill((0, 0, 0, 150))
+    config.window.blit(list_bg, (25, 95))
     
     for i, (model_num, filename) in enumerate(models):
         # Obtener info del modelo si existe
@@ -170,6 +230,9 @@ def show_models_list():
     return selection
 
 def play_with_model(model_path):
+    # Configurar el modo de juego
+    config.game_mode = 'play'
+    
     # Crear el jugador y cargar el modelo
     p = player.Player()
     if not p.load_weights_from_csv(f'models/{model_path}'):
@@ -186,21 +249,20 @@ def play_with_model(model_path):
         if event and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
             
-        # Dibujar fondo si está disponible
-        if config.BG_IMG:
-            config.window.blit(config.BG_IMG, (0, 0))
-        else:
-            config.window.fill((0, 0, 0))
+        # Dibujar fondo
+        draw_background()
         
-        # Información del modelo
+        # Información del modelo - con fondo semi-transparente
         font = pygame.font.SysFont('Arial', 16)
         info_text = font.render(f"Modelo: {model_path}", True, (255, 255, 255))
         score_text = font.render(f"Puntuación: {p.lifespan}", True, (255, 255, 255))
+        
+        info_bg = pygame.Surface((max(info_text.get_width(), score_text.get_width()) + 20, 50), pygame.SRCALPHA)
+        info_bg.fill((0, 0, 0, 150))
+        config.window.blit(info_bg, (5, 5))
+        
         config.window.blit(info_text, (10, 10))
         config.window.blit(score_text, (10, 30))
-        
-        # Dibujar el suelo
-        config.ground.draw(config.window)
         
         # Generar tuberías
         if pipes_spawn_time <= 0:
@@ -211,7 +273,6 @@ def play_with_model(model_path):
         # Actualizar y dibujar tuberías
         to_remove = []
         for pipe in config.pipes:
-            pipe.draw(config.window)
             pipe.update()
             if pipe.off_screen:
                 to_remove.append(pipe)
@@ -225,26 +286,49 @@ def play_with_model(model_path):
             p.look()
             p.think()
             p.update(config.ground.rect)
-            p.draw(config.window)
+            
         else:
             # Juego terminado
             game_over = font.render("¡Game Over! Presiona ESC para volver", True, (255, 255, 255))
+            game_over_bg = pygame.Surface((game_over.get_width() + 20, game_over.get_height() + 10), pygame.SRCALPHA)
+            game_over_bg.fill((0, 0, 0, 150))
+            config.window.blit(game_over_bg, (config.win_width//2 - (game_over.get_width() + 20)//2, config.win_height//2 - 5))
             config.window.blit(game_over, (config.win_width//2 - game_over.get_width()//2, config.win_height//2))
+        
+        # Dibujar tuberías después de actualizar
+        for pipe in config.pipes:
+            pipe.draw(config.window)
+            
+        # Dibujar el suelo después de todo
+        config.ground.draw(config.window)
+        
+        # Dibujar el jugador por encima del suelo
+        if p.alive:
+            p.draw(config.window)
         
         pygame.display.flip()
         clock.tick(60)
     
     # Limpiar para volver al menú
     config.pipes.clear()
+    config.game_mode = None
 
 def train_population(population_size=100):
+    # Configurar el modo de entrenamiento
+    config.game_mode = 'train'
+    
     # Inicializar población
     pop = population.Population(population_size)
+    # Establecer límite de iteraciones a None para indicar entrenamiento infinito
     pop.iterations_limit = None
     
     # Configuración del juego
     pipes_spawn_time = 10
     config.ground = components.Ground(config.win_width)
+    
+    # Variables para guardar automáticamente
+    last_save_time = time.time()
+    auto_save_interval = 300  # Guardar cada 5 minutos
     
     # Bucle principal de entrenamiento
     running = True
@@ -255,21 +339,37 @@ def train_population(population_size=100):
             pop.save_best_player()
             running = False
             
-        config.window.fill((0, 0, 0))
+        # Dibujar fondo
+        draw_background()
         
-        # Mostrar información del entrenamiento
+        # Guardar automáticamente cada cierto tiempo
+        current_time = time.time()
+        if current_time - last_save_time > auto_save_interval:
+            pop.save_best_player()
+            last_save_time = current_time
+        
+        # Mostrar información del entrenamiento con fondo semi-transparente
         font = pygame.font.SysFont('Arial', 16)
-        gen_text = font.render(f"Generación: {pop.generation}/Infinito", True, (255, 255, 255))
+        gen_text = font.render(f"Generación: {pop.generation} (Infinito)", True, (255, 255, 255))
         alive_text = font.render(f"Vivos: {sum(1 for p in pop.players if p.alive)}/{len(pop.players)}", True, (255, 255, 255))
         fitness_text = font.render(f"Mejor Fitness: {pop.best_fitness}", True, (255, 255, 255))
+        time_since_save = current_time - last_save_time
+        save_text = font.render(f"Último guardado: hace {int(time_since_save)}s", True, (255, 255, 255))
+        esc_text = font.render("ESC para guardar y salir", True, (255, 255, 255))
+        
+        # Crear un fondo semi-transparente para todos los textos
+        max_width = max(gen_text.get_width(), alive_text.get_width(), 
+                       fitness_text.get_width(), save_text.get_width(), 
+                       esc_text.get_width()) + 20
+        info_bg = pygame.Surface((max_width, 110), pygame.SRCALPHA)
+        info_bg.fill((0, 0, 0, 150))
+        config.window.blit(info_bg, (5, 5))
         
         config.window.blit(gen_text, (10, 10))
         config.window.blit(alive_text, (10, 30))
         config.window.blit(fitness_text, (10, 50))
-        config.window.blit(font.render("ESC para guardar y salir", True, (255, 255, 255)), (10, 70))
-        
-        # Dibujar el suelo
-        config.ground.draw(config.window)
+        config.window.blit(save_text, (10, 70))
+        config.window.blit(esc_text, (10, 90))
         
         # Generar tuberías
         if pipes_spawn_time <= 0:
@@ -288,6 +388,9 @@ def train_population(population_size=100):
         for pipe in to_remove:
             if pipe in config.pipes:
                 config.pipes.remove(pipe)
+        
+        # Dibujar el suelo
+        config.ground.draw(config.window)
         
         # Actualizar todos los jugadores vivos
         if not pop.extinct():
@@ -303,6 +406,7 @@ def train_population(population_size=100):
     
     # Limpiar para volver al menú
     config.pipes.clear()
+    config.game_mode = None
 
 def main():
     # Cargar recursos si están disponibles
@@ -318,7 +422,7 @@ def main():
         choice = show_menu()
         
         if choice == 'train':
-            # Iniciar entrenamiento directamente con valores predeterminados (50 iteraciones)
+            # Iniciar entrenamiento infinito
             train_population()
         
         elif choice == 'play':

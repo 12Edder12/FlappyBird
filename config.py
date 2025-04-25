@@ -37,5 +37,5 @@ def load_images():
     PIPE_IMG = pygame.transform.scale(pygame.image.load('assets/pipe.png'), (52, 320))
     
     # Cargar imagen del suelo y fondo
-    BASE_IMG = pygame.transform.scale(pygame.image.load('assets/base.png'), (win_width, 70))
+    BASE_IMG = pygame.transform.scale(pygame.image.load('assets/ground.png'), (win_width, 70))
     BG_IMG = pygame.transform.scale(pygame.image.load('assets/bg.png'), (win_width, win_height))

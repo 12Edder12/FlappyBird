@@ -1,5 +1,5 @@
 Generaciones: 2
-Fitness: 338
-Fecha de creación: 2025-04-22 16:40:27
-Población: 100
-Iteraciones: 10
+Fitness: 3402
+Fecha de creacion: 2025-04-24 19:12:47
+Poblacion: 100
+Iteraciones: None
