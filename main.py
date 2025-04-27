@@ -313,7 +313,7 @@ def play_with_model(model_path):
     config.pipes.clear()
     config.game_mode = None
 
-def train_population(population_size=100):
+def train_population(population_size=1000):
     # Configurar el modo de entrenamiento
     config.game_mode = 'train'
     

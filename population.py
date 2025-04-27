@@ -162,7 +162,6 @@ class Population:
                 f.write(f"Fitness: {self.best_fitness}\n")
                 f.write(f"Fecha de creacion: {import_datetime().now().strftime('%Y-%m-%d %H:%M:%S')}\n")
                 f.write(f"Poblacion: {self.size}\n")
-                f.write(f"Iteraciones: {self.iterations_limit}\n")
         else:
             print("No hay jugador para guardar")
 
