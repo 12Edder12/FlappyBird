@@ -7,27 +7,27 @@ import math
 
 class Player:
     def __init__(self):
-        # Bird
-        self.x, self.y = 50, 200
-        self.rect = pygame.Rect(self.x, self.y, 34, 24)  # Tamaño ajustado para la imagen
-        self.color = random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)
-        self.vel = 0
-        self.flap = False
-        self.alive = True
-        self.lifespan = 0
+    # Bird
+        self.x, self.y = 50, 200  # Posición inicial del pájaro
+        self.rect = pygame.Rect(self.x, self.y, 34, 24)  # Rectángulo de colisión
+        self.color = random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)  # Color aleatorio
+        self.vel = 0  # Velocidad vertical inicial
+        self.flap = False  # Estado del aleteo
+        self.alive = True  # Estado de vida
+        self.lifespan = 0  # Contador de tiempo de vida (frames)
         
         # Animación
-        self.img_count = 0
-        self.img_index = 0
-        self.tilt = 0
+        self.img_count = 0  # Contador para la animación
+        self.img_index = 0  # Índice de la imagen actual
+        self.tilt = 0  # Inclinación del pájaro
 
         # AI
-        self.decision = None
-        self.vision = [0.5, 1, 0.5]
-        self.fitness = 0
-        self.inputs = 3
-        self.brain = brain.Brain(self.inputs)
-        self.brain.generate_net()
+        self.decision = None  # Resultado de la decisión de la IA
+        self.vision = [0.5, 1, 0.5]  # Datos de entrada para la IA (visión)
+        self.fitness = 0  # Puntuación de aptitud para el algoritmo genético
+        self.inputs = 3  # Número de entradas para la red neuronal
+        self.brain = brain.Brain(self.inputs)  # Crea una red neuronal
+        self.brain.generate_net()  # Inicializa la red neuronal
 
     # Game related functions
     def draw(self, window):
