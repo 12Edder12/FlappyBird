@@ -37,7 +37,7 @@ class Ground:
 
 class Pipes:
     width = 52  # Ancho ajustado para la imagen
-    opening = 150  # Apertura entre tuberías aumentada para gráficos
+    opening = 104  # Apertura entre tuberías aumentada para gráficos
 
     def __init__(self, win_width):
         self.x = win_width
